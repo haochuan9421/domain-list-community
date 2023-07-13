@@ -1,7 +1,7 @@
-import { createReadStream, createWriteStream } from "node:fs";
+import { createReadStream, writeFileSync } from "node:fs";
 import { Splitable } from "async-iterable-split";
 
-const cnFile = createWriteStream("cn.txt");
+const rules = [];
 
 async function parse(filename) {
   const splitable = new Splitable(createReadStream(`data/${filename}`));
@@ -24,16 +24,16 @@ async function parse(filename) {
         break;
       case "domain":
       case undefined:
-        cnFile.write("domain:" + value + "\n");
+        rules.push({ type: "domain", value });
         break;
       case "full":
-        cnFile.write("full:" + value + "\n");
+        rules.push({ type: "full", value });
         break;
       case "keyword":
-        cnFile.write("keyword:" + value + "\n");
+        rules.push({ type: "keyword", value });
         break;
       case "regexp":
-        cnFile.write("regexp:" + value + "\n");
+        rules.push({ type: "regexp", value });
         break;
       default:
         throw new Error(`unknow type: ${type}`);
@@ -42,3 +42,5 @@ async function parse(filename) {
 }
 
 await parse("cn");
+
+writeFileSync("cn.json", JSON.stringify(rules));
