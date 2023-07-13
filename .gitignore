@@ -8,3 +8,6 @@ dlc.dat
 
 # Exported plaintext lists.
 /*.txt
+
+.DS_Store
+node_modules
