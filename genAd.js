@@ -48,4 +48,4 @@ async function parse(filename) {
 
 await parse("category-ads");
 
-writeFileSync("ads.json", JSON.stringify(rules));
+writeFileSync("ad.json", JSON.stringify(rules));
