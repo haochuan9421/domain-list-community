@@ -1,7 +1,25 @@
 import { createReadStream, writeFileSync } from "node:fs";
 import { Splitable } from "async-iterable-split";
 
-const rules = [];
+const rules = {
+  full: [],
+  keyword: [],
+  suffix: ["hcfy.app", "biliimg.com", "volcengine.com"],
+  regexp: [
+    ["^(::f{4}:)?10\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$", "i"],
+    ["^(::f{4}:)?192\\.168\\.([0-9]{1,3})\\.([0-9]{1,3})$", "i"],
+    [
+      "^(::f{4}:)?172\\.(1[6-9]|2\\d|30|31)\\.([0-9]{1,3})\\.([0-9]{1,3})$",
+      "i",
+    ],
+    ["^(::f{4}:)?127\\.([0-9]{1,3})\\.([0-9]{1,3})\\.([0-9]{1,3})$", "i"],
+    ["^(::f{4}:)?169\\.254\\.([0-9]{1,3})\\.([0-9]{1,3})$", "i"],
+    ["^f[cd][0-9a-f]{2}:", "i"],
+    ["^fe80:", "i"],
+    ["^::1$"],
+    ["^::"],
+  ],
+};
 
 async function parse(filename) {
   const splitable = new Splitable(createReadStream(`data/${filename}`));
@@ -24,16 +42,16 @@ async function parse(filename) {
         break;
       case "domain":
       case undefined:
-        rules.push({ type: "domain", value });
+        rules.suffix.push(value);
         break;
       case "full":
-        rules.push({ type: "full", value });
+        rules.full.push(value);
         break;
       case "keyword":
-        rules.push({ type: "keyword", value });
+        rules.keyword.push(value);
         break;
       case "regexp":
-        rules.push({ type: "regexp", value });
+        rules.regexp.push([value]);
         break;
       default:
         throw new Error(`unknow type: ${type}`);
@@ -41,6 +59,7 @@ async function parse(filename) {
   }
 }
 
+await parse("private");
 await parse("cn");
 
-writeFileSync("cn.json", JSON.stringify(rules));
+writeFileSync("bypass.json", JSON.stringify(rules));
