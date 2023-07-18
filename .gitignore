@@ -11,5 +11,5 @@ dlc.dat
 
 .DS_Store
 node_modules
-bypass.json
+*.json
 
